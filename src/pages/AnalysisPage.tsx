@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axios from "axios";
 import ReactMarkdown from 'react-markdown';
 import './AnalysisPage.css'; // We'll create this
 
@@ -26,46 +26,85 @@ const AnalysisPage: React.FC = () => {
     }
   };
 
-  const handleSubmit = async () => {
-    if (!faceImage || !tongueImage) {
-      setError('Please upload both images to proceed.');
-      return;
-    }
-    setIsLoading(true);
-    setError(null);
-    setAnalysisResult('');
 
-    const formData = new FormData();
-    formData.append('faceImage', faceImage);
-    formData.append('tongueImage', tongueImage);
+  
 
-    try {
-      const storedUserInfo = localStorage.getItem('userInfo');
-      const token = storedUserInfo ? JSON.parse(storedUserInfo).token : null;
-      if (!token) throw new Error('Authentication token not found.');
+const handleSubmit = async () => {
+  if (!faceImage || !tongueImage) {
+    setError("Please upload both images to proceed.");
+    return;
+  }
+  setIsLoading(true);
+  setError(null);
+  setAnalysisResult("");
 
-      const config = {
+  try {
+    // ✅ Convert images to Base64
+    const toBase64 = (file: File) =>
+      new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (error) => reject(error);
+      });
+
+    const faceBase64 = await toBase64(faceImage);
+    const tongueBase64 = await toBase64(tongueImage);
+
+    // ✅ Replace with your actual Gemini API key
+    const GEMINI_API_KEY = "AIzaSyDqsvVlNE5uTLdXTjPgQvrxQ9qo1IWUgWM";
+
+    // ✅ Call Gemini multimodal endpoint
+    const { data } = await axios.post(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        contents: [
+          {
+            role: "user",
+            parts: [
+              {
+                text: "Analyze these two medical images (face + tongue). Tell me what is happening in simple, clear terms.",
+              },
+              {
+                inline_data: {
+                  mime_type: faceImage.type,
+                  data: faceBase64.split(",")[1], // strip "data:image/png;base64,"
+                },
+              },
+              {
+                inline_data: {
+                  mime_type: tongueImage.type,
+                  data: tongueBase64.split(",")[1],
+                },
+              },
+            ],
+          },
+        ],
+      },
+      {
         headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
-      };
+      }
+    );
 
-      const { data } = await axios.post('https://backend-hackathon-hs4k.onrender.com/api/analysis/image', formData, config);
-      setAnalysisResult(data.analysis);
+    const analysisText =
+      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "No analysis returned.";
+    setAnalysisResult(analysisText);
+  } catch (err: unknown) {
+    const message =
+      axios.isAxiosError(err) && err.response?.data?.error?.message
+        ? err.response.data.error.message
+        : err instanceof Error
+        ? err.message
+        : "An unexpected error occurred.";
+    setError(message);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
-    } catch (err: unknown) {
-      const message =
-        axios.isAxiosError(err) && err.response?.data?.message
-          ? err.response.data.message
-          : err instanceof Error
-          ? err.message
-          : 'An unexpected error occurred.';
-      setError(message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className="analysis-container">
