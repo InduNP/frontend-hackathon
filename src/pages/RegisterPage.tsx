@@ -30,7 +30,7 @@ const RegisterPage: React.FC = () => {
 
     try {
       const config = { headers: { 'Content-Type': 'application/json' } };
-      const { data } = await axios.post('/api/users/register', { name, email, password }, config);
+      const { data } = await axios.post('https://backend-hackathon-hs4k.onrender.com/api/users/register', { name, email, password }, config);
       localStorage.setItem('userInfo', JSON.stringify(data));
       navigate('/dashboard');
     } catch (err: unknown) {

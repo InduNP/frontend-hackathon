@@ -80,7 +80,7 @@ const ProfilePage: React.FC = () => {
 
       try {
         const { data } = await axios.get(
-          "http://localhost:5001/api/users/profile",
+          "https://backend-hackathon-hs4k.onrender.com/api/users/profile",
           {
             headers: { Authorization: `Bearer ${parsed.token}` },
           }
@@ -176,7 +176,7 @@ const ProfilePage: React.FC = () => {
     try {
       const { token } = userInfo;
       const { data } = await axios.put(
-        "http://localhost:5001/api/users/profile",
+        "https://backend-hackathon-hs4k.onrender.com/api/users/profile",
         formData,
         {
           headers: {

@@ -22,7 +22,7 @@ const LoginPage: React.FC = () => {
     setError('');
     try {
       const config = { headers: { 'Content-Type': 'application/json' } };
-      const { data } = await axios.post('/api/users/login', { email, password }, config);
+      const { data } = await axios.post('https://backend-hackathon-hs4k.onrender.com/api/users/login', { email, password }, config);
       localStorage.setItem('userInfo', JSON.stringify(data));
       navigate('/dashboard');
     } catch (err: unknown) {

@@ -6,9 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://backend-hackathon-hs4k.onrender.com', // ❌ removed trailing slash
-        changeOrigin: true,  // ✅ spoof origin header
-        secure: true,        // ✅ keep HTTPS strict (set false only for self-signed certs)
+        target: 'http://localhost:5001',
       },
     },
   },
