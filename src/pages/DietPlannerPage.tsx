@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import remarkGfm from 'remark-gfm'; // <-- CRITICAL IMPORT FOR TABLE RENDERING
+
+import remarkGfm from 'remark-gfm'; 
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import html2pdf from 'html2pdf.js';
