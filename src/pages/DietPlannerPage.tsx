@@ -269,7 +269,7 @@ const DietPlannerPage: React.FC = () => {
       };
       
       // 2. Send the combined form data
-      const { data } = await axios.post('/api/diet/generate', finalFormData, config);
+      const { data } = await axios.post('https://backend-hackathon-hs4k.onrender.com/api/diet/generate', finalFormData, config);
       setDietPlan(data.dietPlan);
     } catch (err: unknown) {
       let message = 'An unexpected error occurred.';

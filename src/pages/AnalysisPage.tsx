@@ -51,7 +51,7 @@ const AnalysisPage: React.FC = () => {
         },
       };
 
-      const { data } = await axios.post('/api/analysis/image', formData, config);
+      const { data } = await axios.post('https://backend-hackathon-hs4k.onrender.com/api/analysis/image', formData, config);
       setAnalysisResult(data.analysis);
 
     } catch (err: unknown) {
